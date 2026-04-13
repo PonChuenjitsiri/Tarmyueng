@@ -1,0 +1,32 @@
+# =========================
+# Root Monorepo Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Backend (C# .NET)
+# =========================
+backend/[Bb]in/
+backend/[Oo]bj/
+backend/.vs/
+backend/*.user
+backend/appsettings.Development.json
+
+# =========================
+# Frontend (React / Vite)
+# =========================
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.eslintcache
+
+# =========================
+# OS / Editor Files
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
