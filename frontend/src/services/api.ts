@@ -158,4 +158,10 @@ export const resetPassword = async (token: string, newPassword: string) => {
   return response.data;
 };
 
+// --- Reports ---
+export const getBillsBySubscription = async () => {
+  const response = await api.get('/reports/bills-by-subscription');
+  return response.data;
+};
+
 export default api;

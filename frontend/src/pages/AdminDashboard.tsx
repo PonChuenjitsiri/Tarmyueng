@@ -15,7 +15,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getAdminAllBills, getAdminHistory, getCurrentUser, deleteBill } from '../services/api';
+import { getAdminAllBills, getAdminHistory, getCurrentUser, deleteBill, getBillsBySubscription } from '../services/api';
 import AddBillDialog from '../components/AddBillDialog';
 
 interface StatCardProps {
@@ -249,17 +249,13 @@ const AdminDashboard: React.FC = () => {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [billsData, historyData] = await Promise.all([getAdminAllBills(), getAdminHistory()]);
+      const [billsData, historyData, groupedData] = await Promise.all([
+        getAdminAllBills(),
+        getAdminHistory(),
+        getBillsBySubscription()
+      ]);
       setBills(billsData);
       setHistory(historyData);
-
-      // Fetch grouped bills
-      const response = await fetch('http://localhost:5041/api/reports/bills-by-subscription', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const groupedData = await response.json();
       setGroupedBills(groupedData);
     } catch {
       setError('Failed to load dashboard data.');
