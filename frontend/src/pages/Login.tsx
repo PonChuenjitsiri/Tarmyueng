@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
 import {
   Box, Typography, TextField, Button, Alert,
-  IconButton, InputAdornment, Divider, Chip, Link
+  IconButton, InputAdornment, Link
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { loginUser } from '../services/api';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-
-const TEST_ACCOUNTS = [
-  { label: 'Admin', email: 'admin@tarmyueng.com', password: 'admin123', color: '#7c3aed' },
-  { label: 'User',  email: 'user@tarmyueng.com',  password: 'user123',  color: '#2563eb' },
-];
 
 const Login: React.FC = () => {
   const [email, setEmail]       = useState('');
@@ -34,12 +29,6 @@ const Login: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillAccount = (acc: typeof TEST_ACCOUNTS[0]) => {
-    setEmail(acc.email);
-    setPassword(acc.password);
-    setError('');
   };
 
   return (
@@ -115,26 +104,6 @@ const Login: React.FC = () => {
               </Button>
             </Box>
           </form>
-
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="caption" color="text.secondary">Quick fill test accounts</Typography>
-          </Divider>
-
-          <Box sx={{ display: 'flex', gap: 1.5 }}>
-            {TEST_ACCOUNTS.map(acc => (
-              <Chip
-                key={acc.label}
-                label={acc.label}
-                onClick={() => fillAccount(acc)}
-                sx={{
-                  flex: 1, borderRadius: 8, cursor: 'pointer', fontWeight: 600,
-                  bgcolor: `${acc.color}14`, color: acc.color,
-                  border: `1px solid ${acc.color}40`,
-                  '&:hover': { bgcolor: `${acc.color}22` },
-                }}
-              />
-            ))}
-          </Box>
         </Box>
       </Box>
     </Box>

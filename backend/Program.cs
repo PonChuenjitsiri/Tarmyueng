@@ -1,4 +1,5 @@
 using ExpenseTracker.Api.Data;
+using ExpenseTracker.Api.Models;
 using ExpenseTracker.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -110,6 +111,33 @@ try
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync();
         Console.WriteLine("Database migrations completed.");
+
+        // Seed admin user
+        Console.WriteLine("Seeding admin user...");
+        var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHashingService>();
+        var adminEmail = "ponzajaa@gmail.com";
+        var adminExists = await db.Users.AnyAsync(u => u.Email == adminEmail);
+
+        if (!adminExists)
+        {
+            var hashedPassword = passwordHasher.HashPassword("Jammy3018");
+            var adminUser = new User
+            {
+                Username = "Pon",
+                Email = adminEmail,
+                PasswordHash = hashedPassword,
+                Role = "Admin",
+                PromptPayId = "0869166078",
+                IsActive = true
+            };
+            db.Users.Add(adminUser);
+            await db.SaveChangesAsync();
+            Console.WriteLine("✅ Admin user seeded successfully.");
+        }
+        else
+        {
+            Console.WriteLine("Admin user already exists.");
+        }
 
         Console.WriteLine("Initializing Minio...");
         var minioService = scope.ServiceProvider.GetRequiredService<MinioService>();
