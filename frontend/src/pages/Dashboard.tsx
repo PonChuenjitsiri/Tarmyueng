@@ -85,15 +85,15 @@ const Dashboard: React.FC = () => {
   return (
     <div>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-        Welcome back, {user?.username}!
+        ยินดีต้อนรับกลับ {user?.username}!
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        You have {bills.length} pending bill{bills.length !== 1 ? 's' : ''}.
+        คุณมี {bills.length} บิลรอชำระ
       </Typography>
 
       {bills.length === 0 ? (
         <Alert severity="success" sx={{ mt: 2, borderRadius: 3 }}>
-          You have no pending bills! You are all clear.
+          คุณไม่มีบิลรอชำระ! คุณสบายใจได้
         </Alert>
       ) : (
         <Grid container spacing={3} sx={{ mt: 1 }}>

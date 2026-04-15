@@ -136,9 +136,9 @@ const Bills: React.FC = () => {
     <Box>
       {/* Header */}
       <Box sx={{ mb: { xs: 2.5, sm: 4 } }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>My Payment History</Typography>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>ประวัติการชำระเงินของฉัน</Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
-          All payments you have submitted
+          การชำระเงินทั้งหมดที่คุณส่งมา
         </Typography>
       </Box>
 
@@ -146,16 +146,16 @@ const Bills: React.FC = () => {
       {history.length > 0 && (
         <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, mb: 3, flexWrap: 'wrap' }}>
           <Box sx={{ px: { xs: 1.5, sm: 2.5 }, py: 1, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 100 }}>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Total paid</Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>รวมชำระแล้ว</Typography>
             <Typography variant="body1" sx={{ fontWeight: 700, color: '#27ae60', fontSize: { xs: '1rem', sm: '1.25rem' } }}>฿{totalVerified.toFixed(2)}</Typography>
           </Box>
           <Box sx={{ px: { xs: 1.5, sm: 2.5 }, py: 1, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 90 }}>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Approved</Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>อนุมัติแล้ว</Typography>
             <Typography variant="body1" sx={{ fontWeight: 700, color: '#27ae60', fontSize: { xs: '1rem', sm: '1.25rem' } }}>{approvedCount}</Typography>
           </Box>
           {pendingCount > 0 && (
             <Box sx={{ px: { xs: 1.5, sm: 2.5 }, py: 1, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 90 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Pending</Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>รอการตรวจสอบ</Typography>
               <Typography variant="body1" sx={{ fontWeight: 700, color: '#e67e22', fontSize: { xs: '1rem', sm: '1.25rem' } }}>{pendingCount}</Typography>
             </Box>
           )}
@@ -165,10 +165,15 @@ const Bills: React.FC = () => {
       {/* Filter tabs */}
       {history.length > 0 && (
         <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
-          <Tabs value={tab} onChange={(_, v) => setTab(v)}>
-            <Tab label={`All (${history.length})`} />
-            <Tab label={`Approved (${approvedCount})`} />
-            {pendingCount > 0 && <Tab label={`Pending (${pendingCount})`} />}
+          <Tabs
+            value={tab}
+            onChange={(_, v) => setTab(v)}
+            variant={isMobile ? 'scrollable' : 'standard'}
+            scrollButtons={isMobile ? 'auto' : false}
+          >
+            <Tab label={`ทั้งหมด (${history.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
+            <Tab label={`อนุมัติแล้ว (${approvedCount})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
+            {pendingCount > 0 && <Tab label={`รอการตรวจสอบ (${pendingCount})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />}
           </Tabs>
         </Box>
       )}
@@ -178,7 +183,7 @@ const Bills: React.FC = () => {
         <Box sx={{ textAlign: 'center', py: 10, color: 'text.secondary' }}>
           <ReceiptLongIcon sx={{ fontSize: 52, opacity: 0.18, mb: 1 }} />
           <Typography variant="body1">
-            {history.length === 0 ? "You haven't made any payments yet." : 'No payments match this filter.'}
+            {history.length === 0 ? "คุณยังไม่ได้ชำระเงิน" : 'ไม่มีการชำระเงินที่ตรงกับตัวกรองนี้'}
           </Typography>
         </Box>
       ) : (
@@ -187,12 +192,12 @@ const Bills: React.FC = () => {
             <TableHead sx={{ bgcolor: '#f8f9fa' }}>
               <TableRow>
                 <TableCell padding="checkbox" />
-                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>Bill</TableCell>
-                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>Month</TableCell>}
-                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>Amount</TableCell>
-                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>Status</TableCell>
-                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>Verified at</TableCell>}
-                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>Bank ref</TableCell>}
+                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>บิล</TableCell>
+                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>เดือน</TableCell>}
+                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>จำนวนเงิน</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>สถานะ</TableCell>
+                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>วันที่ตรวจสอบ</TableCell>}
+                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>อ้างอิงธนาคาร</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>

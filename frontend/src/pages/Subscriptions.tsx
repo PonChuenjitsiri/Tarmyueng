@@ -90,31 +90,31 @@ const Subscriptions: React.FC = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: { xs: 2.5, sm: 4 }, gap: 2, flexWrap: 'wrap' }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>Subscriptions</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>สมาชิก</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
-            Recurring bill groups — bills are auto-generated each month
+            กลุ่มบิลที่เกิดซ้ำ — บิลจะสร้างอัตโนมัติทุกเดือน
           </Typography>
         </Box>
         {user?.role === 'Admin' && (
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)} sx={{ borderRadius: 8, px: { xs: 2, sm: 3 }, fontSize: { xs: '0.85rem', sm: '1rem' } }} size="small">
-            New Subscription
+            สมาชิกใหม่
           </Button>
         )}
       </Box>
 
       {user?.role !== 'Admin' && (
         <Alert severity="info" sx={{ mb: 3, borderRadius: 3 }}>
-          You can view subscription templates here. Only admins can create or manage them.
+          คุณสามารถดูแม่แบบสมาชิกได้ที่นี่ เฉพาะผู้ดูแลเท่านั้นที่สามารถสร้างหรือจัดการได้
         </Alert>
       )}
 
       {subscriptions.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 10, color: 'text.secondary' }}>
           <AutorenewIcon sx={{ fontSize: 52, opacity: 0.18, mb: 1 }} />
-          <Typography variant="body1">No subscriptions yet.</Typography>
+          <Typography variant="body1">ยังไม่มีสมาชิก</Typography>
           {user?.role === 'Admin' && (
             <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)} sx={{ mt: 2, borderRadius: 8 }}>
-              Create first subscription
+              สร้างสมาชิกแรก
             </Button>
           )}
         </Box>
