@@ -133,15 +133,17 @@ const Dashboard: React.FC = () => {
 
                     {/* PromptPay QR */}
                     <Box sx={{ textAlign: 'center', my: 2, p: 2, bgcolor: '#f8f9fa', borderRadius: 2 }}>
-                      <QRCodeSVG value={qrPayload} size={150} />
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                        <QRCodeSVG value={qrPayload} size={140} />
+                      </Box>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                         PromptPay: {promptPayId}
                       </Typography>
                     </Box>
 
                     {/* Upload section */}
                     <Box sx={{ mt: 2 }}>
-                      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap', mb: 2 }}>
+                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', flexWrap: 'wrap', mb: 2 }}>
                         <input
                           accept="image/*"
                           style={{ display: 'none' }}
@@ -151,8 +153,8 @@ const Dashboard: React.FC = () => {
                           disabled={verifying || isPaid}
                         />
                         <label htmlFor={`upload-${bill.id}`}>
-                          <Button variant="outlined" component="span" disabled={verifying || isPaid} sx={{ borderRadius: 8 }}>
-                            {selectedFile ? 'Change Slip' : 'Upload Slip'}
+                          <Button variant="outlined" component="span" disabled={verifying || isPaid} sx={{ borderRadius: 8, fontSize: { xs: '0.875rem', sm: '1rem' } }} size="small">
+                            {selectedFile ? 'Change' : 'Upload'}
                           </Button>
                         </label>
 
@@ -161,7 +163,8 @@ const Dashboard: React.FC = () => {
                           color="success"
                           disabled={!selectedFile || verifying || isPaid}
                           onClick={() => handleVerify(bill.id)}
-                          sx={{ borderRadius: 8, px: 4 }}
+                          sx={{ borderRadius: 8, px: { xs: 2, sm: 4 }, fontSize: { xs: '0.875rem', sm: '1rem' } }}
+                          size="small"
                         >
                           {verifying ? 'Verifying...' : 'Pay Now'}
                         </Button>

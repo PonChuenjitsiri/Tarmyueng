@@ -34,45 +34,47 @@ const Login: React.FC = () => {
   return (
     <Box sx={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      bgcolor: '#f8f9fa', px: 2,
+      bgcolor: '#f8f9fa', px: { xs: 1.5, sm: 2 }, py: 2,
     }}>
       <Box sx={{ width: '100%', maxWidth: 400 }}>
 
         {/* Logo */}
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-1px', color: '#2c3e50' }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 4 } }}>
+          <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-1px', color: '#2c3e50', fontSize: { xs: '2rem', sm: '3rem' } }}>
             💸 Tarmyueng
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
             Shared expense tracker
           </Typography>
         </Box>
 
         {/* Card */}
         <Box sx={{
-          bgcolor: 'white', borderRadius: 4, p: 4,
+          bgcolor: 'white', borderRadius: 4, p: { xs: 2.5, sm: 4 },
           boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
           border: '1px solid #e5e7eb',
         }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>Welcome back</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5, fontSize: { xs: '1rem', sm: '1.25rem' } }}>Welcome back</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
             Sign in to your account
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>{error}</Alert>
+            <Alert severity="error" sx={{ mb: 2, borderRadius: 2, fontSize: { xs: '0.85rem', sm: '1rem' } }}>{error}</Alert>
           )}
 
           <form onSubmit={handleLogin}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
                 label="Email address" type="email" fullWidth autoFocus
                 value={email} onChange={e => setEmail(e.target.value)}
+                size="small"
               />
               <TextField
                 label="Password" fullWidth
                 type={showPw ? 'text' : 'password'}
                 value={password} onChange={e => setPassword(e.target.value)}
+                size="small"
                 slotProps={{
                   input: {
                     endAdornment: (
@@ -90,15 +92,15 @@ const Login: React.FC = () => {
                   component={RouterLink}
                   to="/forgot-password"
                   variant="body2"
-                  sx={{ fontWeight: 600, textDecoration: 'none' }}
+                  sx={{ fontWeight: 600, textDecoration: 'none', fontSize: { xs: '0.8rem', sm: '1rem' } }}
                 >
                   Forgot password?
                 </Link>
               </Box>
               <Button
-                type="submit" variant="contained" fullWidth size="large"
+                type="submit" variant="contained" fullWidth
                 disabled={loading}
-                sx={{ borderRadius: 8, py: 1.4, fontWeight: 700, fontSize: '0.95rem', mt: 1 }}
+                sx={{ borderRadius: 8, py: { xs: 1, sm: 1.4 }, fontWeight: 700, fontSize: { xs: '0.9rem', sm: '0.95rem' }, mt: 1 }}
               >
                 {loading ? 'Signing in…' : 'Sign in'}
               </Button>

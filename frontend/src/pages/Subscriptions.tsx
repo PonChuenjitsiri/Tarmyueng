@@ -88,15 +88,15 @@ const Subscriptions: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: { xs: 2.5, sm: 4 }, gap: 2, flexWrap: 'wrap' }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>Subscriptions</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>Subscriptions</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
             Recurring bill groups — bills are auto-generated each month
           </Typography>
         </Box>
         {user?.role === 'Admin' && (
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)} sx={{ borderRadius: 8, px: 3 }}>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)} sx={{ borderRadius: 8, px: { xs: 2, sm: 3 }, fontSize: { xs: '0.85rem', sm: '1rem' } }} size="small">
             New Subscription
           </Button>
         )}
@@ -119,7 +119,7 @@ const Subscriptions: React.FC = () => {
           )}
         </Box>
       ) : (
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 1.5, sm: 3 }}>
           {subscriptions.map(sub => (
             <Grid size={{ xs: 12, md: 6 }} key={sub.id}>
               <Box sx={{
@@ -128,7 +128,7 @@ const Subscriptions: React.FC = () => {
                 '&:hover': { boxShadow: '0 4px 20px rgba(0,0,0,0.08)' },
               }}>
                 {/* Card header */}
-                <Box sx={{ p: 3, pb: 2, borderBottom: '1px solid #f3f4f6' }}>
+                <Box sx={{ p: { xs: 2, sm: 3 }, pb: 2, borderBottom: '1px solid #f3f4f6' }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <Box>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>{sub.title}</Typography>

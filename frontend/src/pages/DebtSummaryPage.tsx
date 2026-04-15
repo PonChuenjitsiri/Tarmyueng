@@ -16,6 +16,8 @@ import {
   DialogTitle,
   DialogContent,
   Button,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { API_BASE_URL } from '../services/api';
 
@@ -51,6 +53,8 @@ const DebtSummaryPage: React.FC = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [userDetails, setUserDetails] = useState<BillDetail[]>([]);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchUserDebtSummary();
@@ -108,43 +112,43 @@ const DebtSummaryPage: React.FC = () => {
   const selectedUser = users.find(u => u.id === selectedUserId);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, sm: 4 }, px: { xs: 1.5, sm: 2 } }}>
+      <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 'bold', mb: 3, fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>
         📊 User Debt Summary
       </Typography>
 
       {/* Summary Stats */}
-      <Paper sx={{ p: 2, mb: 3, backgroundColor: '#f5f5f5' }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+      <Paper sx={{ p: { xs: 1.5, sm: 2 }, mb: 3, backgroundColor: '#f5f5f5' }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', sm: '1fr 1fr 1fr 1fr' }, gap: { xs: 1, sm: 2 } }}>
           <Box>
-            <Typography color="textSecondary" variant="body2">
+            <Typography color="textSecondary" variant="caption" sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
               Total Users
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.5rem' } }}>
               {users.length}
             </Typography>
           </Box>
           <Box>
-            <Typography color="textSecondary" variant="body2">
+            <Typography color="textSecondary" variant="caption" sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
               Total Outstanding Debt
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#d32f2f' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#d32f2f', fontSize: { xs: '0.9rem', sm: '1.5rem' } }}>
               {formatCurrency(users.reduce((sum, u) => sum + u.totalDebt, 0))}
             </Typography>
           </Box>
           <Box>
-            <Typography color="textSecondary" variant="body2">
+            <Typography color="textSecondary" variant="caption" sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
               Total Paid
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#388e3c' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#388e3c', fontSize: { xs: '0.9rem', sm: '1.5rem' } }}>
               {formatCurrency(users.reduce((sum, u) => sum + u.totalPaid, 0))}
             </Typography>
           </Box>
           <Box>
-            <Typography color="textSecondary" variant="body2">
+            <Typography color="textSecondary" variant="caption" sx={{ fontSize: { xs: '0.7rem', sm: '0.875rem' } }}>
               Users with Debt
             </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="body1" sx={{ fontWeight: 'bold', fontSize: { xs: '1rem', sm: '1.5rem' } }}>
               {users.filter(u => u.totalDebt > 0).length} / {users.length}
             </Typography>
           </Box>
@@ -152,25 +156,31 @@ const DebtSummaryPage: React.FC = () => {
       </Paper>
 
       {/* Main Table */}
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
+        <Table size={isMobile ? 'small' : 'medium'}>
           <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.8rem' : '1rem' }}>User</TableCell>
+              {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>}
+              <TableCell align="right" sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.8rem' : '1rem' }}>
                 Unpaid Debt
               </TableCell>
-              <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                Total Paid
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                Unpaid Bills
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold' }}>
-                Paid Bills
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+              {!isMobile && (
+                <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                  Total Paid
+                </TableCell>
+              )}
+              {!isMobile && (
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  Unpaid Bills
+                </TableCell>
+              )}
+              {!isMobile && (
+                <TableCell align="center" sx={{ fontWeight: 'bold' }}>
+                  Paid Bills
+                </TableCell>
+              )}
+              <TableCell align="center" sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.8rem' : '1rem' }}>
                 Actions
               </TableCell>
             </TableRow>
@@ -178,40 +188,48 @@ const DebtSummaryPage: React.FC = () => {
           <TableBody>
             {users.map(user => (
               <TableRow key={user.id} hover>
-                <TableCell>
+                <TableCell sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>
                   <strong>{user.username}</strong>
                 </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell align="right">
+                {!isMobile && <TableCell sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>{user.email}</TableCell>}
+                <TableCell align="right" sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>
                   <Typography
                     sx={{
                       fontWeight: 'bold',
                       color: user.totalDebt > 0 ? '#d32f2f' : '#388e3c',
+                      fontSize: isMobile ? '0.85rem' : '1rem'
                     }}
                   >
                     {formatCurrency(user.totalDebt)}
                   </Typography>
                 </TableCell>
-                <TableCell align="right">
-                  <Typography sx={{ fontWeight: 'bold', color: '#388e3c' }}>
-                    {formatCurrency(user.totalPaid)}
-                  </Typography>
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    label={user.unpaidBillCount}
-                    color={user.unpaidBillCount > 0 ? 'warning' : 'success'}
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip label={user.paidBillCount} color="success" size="small" />
-                </TableCell>
+                {!isMobile && (
+                  <TableCell align="right">
+                    <Typography sx={{ fontWeight: 'bold', color: '#388e3c' }}>
+                      {formatCurrency(user.totalPaid)}
+                    </Typography>
+                  </TableCell>
+                )}
+                {!isMobile && (
+                  <TableCell align="center">
+                    <Chip
+                      label={user.unpaidBillCount}
+                      color={user.unpaidBillCount > 0 ? 'warning' : 'success'}
+                      size="small"
+                    />
+                  </TableCell>
+                )}
+                {!isMobile && (
+                  <TableCell align="center">
+                    <Chip label={user.paidBillCount} color="success" size="small" />
+                  </TableCell>
+                )}
                 <TableCell align="center">
                   <Button
-                    size="small"
+                    size={isMobile ? 'small' : 'medium'}
                     variant="outlined"
                     onClick={() => fetchUserDetails(user.id)}
+                    sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }}
                   >
                     View Details
                   </Button>

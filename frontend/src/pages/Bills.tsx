@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Typography, Box, CircularProgress, Alert, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Button, Tabs, Tab, IconButton, Collapse
+  TableRow, Paper, Button, Tabs, Tab, IconButton, Collapse, useMediaQuery, useTheme
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -10,7 +10,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { getPaymentHistory, getCurrentUser } from '../services/api';
 
 // ── Expandable history row ────────────────────────────────────────────────────
-const HistoryRow: React.FC<{ row: any }> = ({ row }) => {
+const HistoryRow: React.FC<{ row: any; isMobile?: boolean }> = ({ row, isMobile }) => {
   const [open, setOpen] = useState(false);
   const hasSlip = Boolean(row.receiptImageUrl);
 
@@ -28,28 +28,32 @@ const HistoryRow: React.FC<{ row: any }> = ({ row }) => {
           </IconButton>
         </TableCell>
         <TableCell>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>{row.billName}</Typography>
-          <Typography variant="caption" color="text.secondary">Paid to {row.adminName}</Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: isMobile ? '0.85rem' : '1rem' }}>{row.billName}</Typography>
+          {!isMobile && <Typography variant="caption" color="text.secondary">Paid to {row.adminName}</Typography>}
         </TableCell>
-        <TableCell>{row.monthYear}</TableCell>
-        <TableCell sx={{ fontWeight: 700 }}>฿{(row.verifiedAmount ?? 0).toFixed(2)}</TableCell>
+        {!isMobile && <TableCell>{row.monthYear}</TableCell>}
+        <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>฿{(row.verifiedAmount ?? 0).toFixed(2)}</TableCell>
         <TableCell>
           <Chip
             label={row.status}
-            size="small"
+            size={isMobile ? 'small' : 'medium'}
             color={row.status === 'Approved' ? 'success' : 'warning'}
           />
         </TableCell>
-        <TableCell>
-          <Typography variant="caption" color="text.secondary">
-            {row.verifiedAt ? new Date(row.verifiedAt).toLocaleString() : '—'}
-          </Typography>
-        </TableCell>
-        <TableCell>
-          <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace', fontSize: '0.72rem' }}>
-            {row.bankTransactionRef ?? '—'}
-          </Typography>
-        </TableCell>
+        {!isMobile && (
+          <TableCell>
+            <Typography variant="caption" color="text.secondary">
+              {row.verifiedAt ? new Date(row.verifiedAt).toLocaleString() : '—'}
+            </Typography>
+          </TableCell>
+        )}
+        {!isMobile && (
+          <TableCell>
+            <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace', fontSize: '0.72rem' }}>
+              {row.bankTransactionRef ?? '—'}
+            </Typography>
+          </TableCell>
+        )}
       </TableRow>
 
       {/* Slip preview */}
@@ -106,6 +110,8 @@ const Bills: React.FC = () => {
   const [tab, setTab]         = useState(0);
 
   const user = getCurrentUser();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     if (user?.id) {
@@ -129,28 +135,28 @@ const Bills: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>My Payment History</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+      <Box sx={{ mb: { xs: 2.5, sm: 4 } }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', fontSize: { xs: '1.5rem', sm: '2.125rem' } }}>My Payment History</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
           All payments you have submitted
         </Typography>
       </Box>
 
       {/* Summary chips */}
       {history.length > 0 && (
-        <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-          <Box sx={{ px: 2.5, py: 1.5, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 120 }}>
-            <Typography variant="caption" color="text.secondary">Total paid</Typography>
-            <Typography variant="h6" sx={{ fontWeight: 700, color: '#27ae60' }}>฿{totalVerified.toFixed(2)}</Typography>
+        <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, mb: 3, flexWrap: 'wrap' }}>
+          <Box sx={{ px: { xs: 1.5, sm: 2.5 }, py: 1, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 100 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Total paid</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 700, color: '#27ae60', fontSize: { xs: '1rem', sm: '1.25rem' } }}>฿{totalVerified.toFixed(2)}</Typography>
           </Box>
-          <Box sx={{ px: 2.5, py: 1.5, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 100 }}>
-            <Typography variant="caption" color="text.secondary">Approved</Typography>
-            <Typography variant="h6" sx={{ fontWeight: 700, color: '#27ae60' }}>{approvedCount}</Typography>
+          <Box sx={{ px: { xs: 1.5, sm: 2.5 }, py: 1, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 90 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Approved</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 700, color: '#27ae60', fontSize: { xs: '1rem', sm: '1.25rem' } }}>{approvedCount}</Typography>
           </Box>
           {pendingCount > 0 && (
-            <Box sx={{ px: 2.5, py: 1.5, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 100 }}>
-              <Typography variant="caption" color="text.secondary">Pending</Typography>
-              <Typography variant="h6" sx={{ fontWeight: 700, color: '#e67e22' }}>{pendingCount}</Typography>
+            <Box sx={{ px: { xs: 1.5, sm: 2.5 }, py: 1, bgcolor: 'white', border: '1px solid #e5e7eb', borderRadius: 3, minWidth: 90 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>Pending</Typography>
+              <Typography variant="body1" sx={{ fontWeight: 700, color: '#e67e22', fontSize: { xs: '1rem', sm: '1.25rem' } }}>{pendingCount}</Typography>
             </Box>
           )}
         </Box>
@@ -176,21 +182,21 @@ const Bills: React.FC = () => {
           </Typography>
         </Box>
       ) : (
-        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 3, border: '1px solid #e5e7eb' }}>
-          <Table>
+        <TableContainer component={Paper} elevation={0} sx={{ borderRadius: 3, border: '1px solid #e5e7eb', overflowX: 'auto' }}>
+          <Table size={isMobile ? 'small' : 'medium'}>
             <TableHead sx={{ bgcolor: '#f8f9fa' }}>
               <TableRow>
                 <TableCell padding="checkbox" />
-                <TableCell sx={{ fontWeight: 700 }}>Bill</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Month</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Amount</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Verified at</TableCell>
-                <TableCell sx={{ fontWeight: 700 }}>Bank ref</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>Bill</TableCell>
+                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>Month</TableCell>}
+                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>Amount</TableCell>
+                <TableCell sx={{ fontWeight: 700, fontSize: isMobile ? '0.85rem' : '1rem' }}>Status</TableCell>
+                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>Verified at</TableCell>}
+                {!isMobile && <TableCell sx={{ fontWeight: 700 }}>Bank ref</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map(p => <HistoryRow key={p.id} row={p} />)}
+              {filtered.map(p => <HistoryRow key={p.id} row={p} isMobile={isMobile} />)}
             </TableBody>
           </Table>
         </TableContainer>

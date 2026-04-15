@@ -3,7 +3,7 @@ import {
   Typography, Box, Grid, Card, CardContent, CircularProgress, Alert,
   Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead,
   TableRow, Paper, Chip, Button, Avatar, IconButton, Collapse, Accordion, AccordionSummary, AccordionDetails,
-  Dialog, DialogTitle, DialogContent, DialogActions, Snackbar
+  Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, useMediaQuery, useTheme
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import PeopleIcon from '@mui/icons-material/People';
@@ -40,9 +40,9 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color }) => (
 );
 
 // ── Expandable row for Payment History ──────────────────────────────────────
-interface HistoryRowProps { row: any; }
+interface HistoryRowProps { row: any; isMobile?: boolean; }
 
-const HistoryRow: React.FC<HistoryRowProps> = ({ row }) => {
+const HistoryRow: React.FC<HistoryRowProps> = ({ row, isMobile }) => {
   const [open, setOpen] = useState(false);
   const hasSlip = Boolean(row.receiptImageUrl);
 
@@ -55,23 +55,27 @@ const HistoryRow: React.FC<HistoryRowProps> = ({ row }) => {
           </IconButton>
         </TableCell>
         <TableCell>
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>{row.userName}</Typography>
-          <Typography variant="caption" color="text.secondary">{row.userEmail}</Typography>
+          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: isMobile ? '0.85rem' : '1rem' }}>{row.userName}</Typography>
+          {!isMobile && <Typography variant="caption" color="text.secondary">{row.userEmail}</Typography>}
         </TableCell>
-        <TableCell>{row.billName}</TableCell>
-        <TableCell>{row.monthYear}</TableCell>
-        <TableCell sx={{ fontWeight: 'bold' }}>฿{(row.verifiedAmount ?? 0).toFixed(2)}</TableCell>
+        <TableCell sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>{row.billName}</TableCell>
+        {!isMobile && <TableCell sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>{row.monthYear}</TableCell>}
+        <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>฿{(row.verifiedAmount ?? 0).toFixed(2)}</TableCell>
         <TableCell>
-          <Chip label={row.status} size="small" color={row.status === 'Approved' ? 'success' : 'warning'} />
+          <Chip label={row.status} size={isMobile ? 'small' : 'medium'} color={row.status === 'Approved' ? 'success' : 'warning'} />
         </TableCell>
-        <TableCell>
-          <Typography variant="caption" color="text.secondary">
-            {row.verifiedAt ? new Date(row.verifiedAt).toLocaleString() : '—'}
-          </Typography>
-        </TableCell>
-        <TableCell>
-          <Typography variant="caption" color="text.secondary">{row.bankTransactionRef ?? '—'}</Typography>
-        </TableCell>
+        {!isMobile && (
+          <TableCell>
+            <Typography variant="caption" color="text.secondary">
+              {row.verifiedAt ? new Date(row.verifiedAt).toLocaleString() : '—'}
+            </Typography>
+          </TableCell>
+        )}
+        {!isMobile && (
+          <TableCell>
+            <Typography variant="caption" color="text.secondary">{row.bankTransactionRef ?? '—'}</Typography>
+          </TableCell>
+        )}
       </TableRow>
 
       {/* Expandable slip preview */}
@@ -122,9 +126,9 @@ const HistoryRow: React.FC<HistoryRowProps> = ({ row }) => {
 };
 
 // ── Expandable row for All Bills (shows slip when paid) ─────────────────────
-interface BillRowProps { row: any; onDelete: (billId: number) => void; }
+interface BillRowProps { row: any; onDelete: (billId: number) => void; isMobile?: boolean; }
 
-const BillRow: React.FC<BillRowProps> = ({ row, onDelete }) => {
+const BillRow: React.FC<BillRowProps> = ({ row, onDelete, isMobile }) => {
   const [open, setOpen] = useState(false);
   // Safely check if a slip exists using optional chaining
   const hasSlip = Boolean(row.payment?.receiptImageUrl);
@@ -229,6 +233,8 @@ const AdminDashboard: React.FC = () => {
   const [snack, setSnack] = useState<{ open: boolean; msg: string; severity: 'success' | 'error' }>({ open: false, msg: '', severity: 'success' });
 
   const user = getCurrentUser();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -285,7 +291,7 @@ const AdminDashboard: React.FC = () => {
       </Box>
 
       {/* Stats */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <StatCard label="Total Bills" value={bills.length} icon={<ReceiptIcon />} color="#3498db" />
         </Grid>
@@ -314,22 +320,22 @@ const AdminDashboard: React.FC = () => {
         bills.length === 0
           ? <Alert severity="info">No bills yet. Click "Add Bill" to get started.</Alert>
           : (
-            <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3 }}>
-              <Table>
+            <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3, overflowX: 'auto' }}>
+              <Table size={isMobile ? 'small' : 'medium'}>
                 <TableHead sx={{ bgcolor: '#f8f9fa' }}>
                   <TableRow>
                     <TableCell padding="checkbox" />
-                    <TableCell sx={{ fontWeight: 'bold' }}>User</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Bill</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Paid At</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>User</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Bill</TableCell>
+                    {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>}
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Status</TableCell>
+                    {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>Paid At</TableCell>}
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {bills.map(bill => <BillRow key={bill.id} row={bill} onDelete={(billId) => setDeleteConfirm({ open: true, billId })} />)}
+                  {bills.map(bill => <BillRow key={bill.id} row={bill} onDelete={(billId) => setDeleteConfirm({ open: true, billId })} isMobile={isMobile} />)}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -474,7 +480,7 @@ const AdminDashboard: React.FC = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {history.map(p => <HistoryRow key={p.id} row={p} />)}
+                  {history.map(p => <HistoryRow key={p.id} row={p} isMobile={isMobile} />)}
                 </TableBody>
               </Table>
             </TableContainer>
