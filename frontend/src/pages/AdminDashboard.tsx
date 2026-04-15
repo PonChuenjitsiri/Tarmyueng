@@ -141,26 +141,28 @@ const BillRow: React.FC<BillRowProps> = ({ row, onDelete, isMobile }) => {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell>
+        <TableCell sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>
           <Typography variant="body2" sx={{ fontWeight: 500 }}>{row.userName}</Typography>
-          <Typography variant="caption" color="text.secondary">{row.userEmail}</Typography>
+          {!isMobile && <Typography variant="caption" color="text.secondary">{row.userEmail}</Typography>}
         </TableCell>
-        <TableCell>{row.billName}</TableCell>
-        <TableCell>{row.monthYear}</TableCell>
-        <TableCell sx={{ fontWeight: 'bold' }}>฿{row.amountOwed.toFixed(2)}</TableCell>
+        <TableCell sx={{ fontSize: isMobile ? '0.85rem' : '1rem' }}>{row.billName}</TableCell>
+        {!isMobile && <TableCell>{row.monthYear}</TableCell>}
+        <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>฿{row.amountOwed.toFixed(2)}</TableCell>
         <TableCell>
           <Chip
             label={row.status}
-            size="small"
+            size={isMobile ? 'small' : 'medium'}
             color={row.status === 'Paid' ? 'success' : 'warning'}
             variant="filled"
           />
         </TableCell>
-        <TableCell>
-          <Typography variant="caption" color="text.secondary">
-            {row.payment?.verifiedAt ? new Date(row.payment.verifiedAt).toLocaleString() : '—'}
-          </Typography>
-        </TableCell>
+        {!isMobile && (
+          <TableCell>
+            <Typography variant="caption" color="text.secondary">
+              {row.payment?.verifiedAt ? new Date(row.payment.verifiedAt).toLocaleString() : '—'}
+            </Typography>
+          </TableCell>
+        )}
         <TableCell align="right">
           <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
             <IconButton size="small" color="error" onClick={() => onDelete(row.id)} title="Delete bill">
