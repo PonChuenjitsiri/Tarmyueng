@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import {
   Box, Typography, TextField, Button, Alert,
-  IconButton, InputAdornment, Divider, Chip
+  IconButton, InputAdornment, Divider, Chip, Link
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { loginUser } from '../services/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 
 const TEST_ACCOUNTS = [
   { label: 'Admin', email: 'admin@tarmyueng.com', password: 'admin123', color: '#7c3aed' },
@@ -96,6 +96,16 @@ const Login: React.FC = () => {
                   },
                 }}
               />
+              <Box sx={{ textAlign: 'right' }}>
+                <Link
+                  component={RouterLink}
+                  to="/forgot-password"
+                  variant="body2"
+                  sx={{ fontWeight: 600, textDecoration: 'none' }}
+                >
+                  Forgot password?
+                </Link>
+              </Box>
               <Button
                 type="submit" variant="contained" fullWidth size="large"
                 disabled={loading}

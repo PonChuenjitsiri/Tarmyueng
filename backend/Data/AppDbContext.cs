@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<MonthlyBill> MonthlyBills { get; set; }
     public DbSet<BillShare> BillShares { get; set; }
     public DbSet<Payment> Payments { get; set; }
+    public DbSet<PasswordReset> PasswordResets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

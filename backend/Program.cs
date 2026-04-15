@@ -56,6 +56,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<BillingEngineService>();
 builder.Services.AddScoped<EasySlipService>();
 builder.Services.AddScoped<SlipVerificationService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<PasswordResetService>();
 builder.Services.AddSingleton<MinioService>();
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 builder.Services.AddHostedService<BillingSchedulerService>();
@@ -76,13 +78,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddCors(options =>
 {
+    var allowedOrigins = builder.Configuration["AllowedOrigins"]?.Split(',')
+        ?? new[] { "http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174" };
+
     options.AddPolicy("AllowReactApp",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:5174", "http://127.0.0.1:5174")
+            policy.WithOrigins(allowedOrigins)
                   .AllowAnyHeader()
                   .AllowAnyMethod()
-                  .AllowCredentials(); 
+                  .AllowCredentials();
         });
 });
 
@@ -99,10 +104,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-try 
+try
 {
     using (var scope = app.Services.CreateScope())
     {
+        Console.WriteLine("Running database migrations...");
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await db.Database.MigrateAsync();
+        Console.WriteLine("Database migrations completed.");
+
         Console.WriteLine("Initializing Minio...");
         var minioService = scope.ServiceProvider.GetRequiredService<MinioService>();
         await minioService.EnsureBucketAsync();
@@ -111,7 +121,7 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine($"[Startup] MinIO Initialization failed: {ex.Message}");
+    Console.WriteLine($"[Startup] Initialization failed: {ex.Message}");
 }
 Console.WriteLine("App Starting...");
 app.Run();

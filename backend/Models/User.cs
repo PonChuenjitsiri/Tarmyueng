@@ -9,8 +9,9 @@ public class User
     public string Email { get; set; } = string.Empty;
     [JsonIgnore]
     public string PasswordHash { get; set; } = string.Empty;
-    public string? PromptPayId { get; set; } 
-    
+    public string? PromptPayId { get; set; }
+    public bool IsActive { get; set; } = true;
+
     public string Role { get; set; } = "User"; 
     
     [JsonIgnore]

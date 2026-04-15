@@ -10,6 +10,8 @@ import UsersAdmin from './pages/UsersAdmin';
 import Subscriptions from './pages/Subscriptions';
 import ProjectStatusPage from './pages/ProjectStatusPage';
 import DebtSummaryPage from './pages/DebtSummaryPage';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import AppLayout from './components/AppLayout';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { getCurrentUser } from './services/api';
@@ -36,6 +38,8 @@ function App() {
             <Route path="/debt-summary" element={<DebtSummaryPage />} />
             <Route path="/status" element={<ProjectStatusPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </AppLayout>
         <PWAInstallPrompt />

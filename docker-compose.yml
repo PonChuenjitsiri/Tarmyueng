@@ -1,33 +1,124 @@
 version: '3.8'
 
 services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: tarmyueng-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-expensetracker}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secretpassword}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tarmyueng-network
+
+  # MinIO Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: tarmyueng-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-secretpassword}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tarmyueng-network
+
+  # ASP.NET Core Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tarmyueng-backend
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB:-expensetracker};Username=${POSTGRES_USER:-admin};Password=${POSTGRES_PASSWORD:-secretpassword}
+      Jwt__Key: ${JWT_SECRET:-default-dev-key-change-in-production}
+      MinIO__ServiceUrl: http://minio:9000
+      MinIO__AccessKey: ${MINIO_ACCESS_KEY:-admin}
+      MinIO__SecretKey: ${MINIO_SECRET_KEY:-secretpassword}
+      MinIO__BucketName: ${MINIO_BUCKET_NAME:-slips}
+      MinIO__Secure: "false"
+      EasySlip__ApiKey: ${EASYSLIP_API_KEY:-your-easyslip-api-key}
+      Email__SmtpHost: ${SMTP_HOST:-smtp.gmail.com}
+      Email__SmtpPort: ${SMTP_PORT:-587}
+      Email__SenderEmail: ${SENDER_EMAIL:-noreply@example.com}
+      Email__SenderPassword: ${SENDER_PASSWORD:-your-password}
+      App__BaseUrl: ${APP_BASE_URL:-http://localhost:5174}
+      AllowedOrigins: ${ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:5174}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - tarmyueng-network
+
+  # React Frontend with Nginx
   frontend:
-    build: ./frontend
-    container_name: expense_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tarmyueng-frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - tarmyueng-network
 
-  backend:
-    build: ./backend
-    container_name: expense_backend
+  # Traefik Reverse Proxy with Let's Encrypt SSL
+  traefik:
+    image: traefik:v2.11
+    container_name: tarmyueng-traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
     ports:
-      - "8080:8080"
-    environment:
-      - ConnectionStrings__DefaultConnection=Host=db;Database=expensetracker;Username=admin;Password=secretpassword
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15-alpine
-    container_name: expense_db
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secretpassword
-      POSTGRES_DB: expensetracker
+      - "80:80"
+      - "443:443"
+      - "8888:8080"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "letsencrypt:/letsencrypt"
+    labels:
+      - "traefik.enable=true"
+    networks:
+      - tarmyueng-network
 
 volumes:
   pgdata:
+  miniodata:
+  letsencrypt:
+
+networks:
+  tarmyueng-network:
+    driver: bridge

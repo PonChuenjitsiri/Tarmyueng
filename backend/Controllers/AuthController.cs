@@ -40,6 +40,11 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid email or password" });
         }
 
+        if (!user.IsActive)
+        {
+            return Unauthorized(new { message = "Your account is not active. Please check your email to complete setup." });
+        }
+
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "super_secret_dev_key_that_is_very_long_for_security_reasons!");
 
