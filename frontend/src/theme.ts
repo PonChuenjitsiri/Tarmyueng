@@ -81,6 +81,14 @@ const theme = createTheme({
     borderRadius: 8, // Subtle, minimal rounded corners
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        },
+      },
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {

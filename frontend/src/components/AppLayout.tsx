@@ -38,8 +38,8 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <>
-      <AppBar position="static" elevation={0} sx={{ borderBottom: '1px solid #E0E0E0' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+      <AppBar position="static" elevation={0} sx={{ borderBottom: '1px solid #E0E0E0', paddingTop: 'env(safe-area-inset-top)' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, minHeight: 'auto', py: 1 }}>
           {/* Logo */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <img src={logo} alt="Tarmyueng" style={{ height: '40px', width: 'auto' }} />
@@ -130,7 +130,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </Drawer>
       )}
 
-      <Container maxWidth="lg" sx={{ px: { xs: 1.5, sm: 2, md: 3 } }}>
+      <Container maxWidth="lg" sx={{ px: { xs: 1.5, sm: 2, md: 3 }, paddingBottom: 'env(safe-area-inset-bottom)' }}>
         <Box sx={{ my: { xs: 2, sm: 3, md: 4 } }}>
           {children}
         </Box>
