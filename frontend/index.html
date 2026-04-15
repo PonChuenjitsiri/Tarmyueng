@@ -2,12 +2,63 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- App Information -->
+    <title>Tarmyueng - Smart Expense Tracker</title>
+    <meta name="description" content="Smart bill sharing and expense tracking application for managing group expenses" />
+    <meta name="theme-color" content="#5865f2" />
+    <meta name="color-scheme" content="light" />
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.svg" />
+    <link rel="apple-touch-icon" href="/src/assets/logo.svg" />
+
+    <!-- Apple Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Tarmyueng" />
+
+    <!-- Android Specific -->
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Open Graph / Social Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tarmyueng - Smart Expense Tracker" />
+    <meta property="og:description" content="Smart bill sharing and expense tracking application" />
+
+    <!-- Preconnect to API -->
+    <link rel="preconnect" href="http://localhost:5041" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then((registration) => {
+              console.log('✓ Service Worker registered:', registration);
+
+              // Check for updates periodically
+              setInterval(() => {
+                registration.update();
+              }, 60000); // Check every minute
+            })
+            .catch((error) => {
+              console.log('✗ Service Worker registration failed:', error);
+            });
+        });
+
+        // Handle service worker updates
+        navigator.serviceWorker.addEventListener('controller', (event) => {
+          console.log('Service Worker updated');
+          // Optionally notify user about updates
+        });
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,2 @@
+@echo off
+Write-Host "This file is a placeholder for the downloaded image"

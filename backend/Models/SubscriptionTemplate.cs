@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ExpenseTracker.Api.Models;
 
 public class SubscriptionTemplate
@@ -9,9 +11,8 @@ public class SubscriptionTemplate
     public int BillingDayOfMonth { get; set; } 
     public bool IsActive { get; set; } = true;
 
-    // The Owner
-    public User Admin { get; set; } = null!;
+    [JsonIgnore]
+    public User? Admin { get; set; }
     
-    // The Friends splitting the bill
     public List<SubscriptionParticipant> Participants { get; set; } = new();
 }

@@ -1,0 +1,45 @@
+{
+  "name": "Tarmyueng - Expense Tracker",
+  "short_name": "Tarmyueng",
+  "description": "Smart bill sharing and expense tracking application",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#5865f2",
+  "icons": [
+    {
+      "src": "/src/assets/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "productivity"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'><rect width='540' height='720' fill='%23f9fafb'/><text x='50%' y='50%' font-size='60' fill='%235865f2' text-anchor='middle' dominant-baseline='central'>Tarmyueng</text></svg>",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "My Bills",
+      "short_name": "Bills",
+      "description": "View your bills and payments",
+      "url": "/bills",
+      "icons": []
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/dashboard",
+      "icons": []
+    }
+  ],
+  "prefer_related_applications": false
+}
