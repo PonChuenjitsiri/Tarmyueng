@@ -3,6 +3,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Set environment variable for production build
+ARG VITE_API_URL=http://localhost:5041/api
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN npm run build
 
 # Serve the React app using Nginx
