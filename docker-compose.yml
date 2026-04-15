@@ -63,8 +63,8 @@ services:
       Email__SmtpPort: ${SMTP_PORT:-587}
       Email__SenderEmail: ${SENDER_EMAIL:-noreply@example.com}
       Email__SenderPassword: ${SENDER_PASSWORD:-your-password}
-      App__BaseUrl: ${APP_BASE_URL:-http://localhost:5174}
-      AllowedOrigins: ${ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:5174}
+      App__BaseUrl: ${APP_BASE_URL:-https://tarmyueng.pon-hub.com}
+      AllowedOrigins: ${ALLOWED_ORIGINS:-https://tarmyueng.pon-hub.com}
     ports:
       - "8080:8080"
     depends_on:
@@ -88,36 +88,9 @@ services:
     networks:
       - tarmyueng-network
 
-  # Traefik Reverse Proxy with Let's Encrypt SSL
-  traefik:
-    image: traefik:v2.11
-    container_name: tarmyueng-traefik
-    command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8888:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "letsencrypt:/letsencrypt"
-    labels:
-      - "traefik.enable=true"
-    networks:
-      - tarmyueng-network
-
 volumes:
   pgdata:
   miniodata:
-  letsencrypt:
 
 networks:
   tarmyueng-network:
