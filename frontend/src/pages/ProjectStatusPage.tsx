@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Container,
   Paper,
@@ -30,45 +30,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CodeIcon from '@mui/icons-material/Code';
 
-interface StatusItem {
-  label: string;
-  status: 'fixed' | 'improved' | 'ok' | 'pending';
-}
-
 const ProjectStatusPage: React.FC = () => {
-  const [expandedSection, setExpandedSection] = useState<string | false>(false);
-
-  const handleExpand = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpandedSection(isExpanded ? panel : false);
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'fixed':
-        return 'success';
-      case 'improved':
-        return 'info';
-      case 'ok':
-        return 'success';
-      case 'pending':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'fixed':
-      case 'ok':
-      case 'improved':
-        return '✅';
-      case 'pending':
-        return '⏳';
-      default:
-        return '•';
-    }
-  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

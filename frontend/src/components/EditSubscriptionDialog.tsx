@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button,
-  TextField, Typography, Box, Divider, Chip, Alert, CircularProgress
+  TextField, Typography, Box, Chip, Alert, CircularProgress
 } from '@mui/material';
 import { updateSubscription } from '../services/api';
 
