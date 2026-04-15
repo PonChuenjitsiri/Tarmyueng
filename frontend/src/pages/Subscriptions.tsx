@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import {
   Typography, Box, Grid, CircularProgress, Alert, Button, Chip,
-  Divider, Snackbar, Avatar, Tooltip
+  Divider, Snackbar, Avatar, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PeopleIcon from '@mui/icons-material/People';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import { getSubscriptions, getCurrentUser, assignBillToUser, getAllUsers } from '../services/api';
+import { getSubscriptions, getCurrentUser, assignBillToUser, getAllUsers, deleteSubscription } from '../services/api';
 import CreateSubscriptionDialog from '../components/CreateSubscriptionDialog';
+import EditSubscriptionDialog from '../components/EditSubscriptionDialog';
 
 const avatarColor = (name: string) => {
   const p = ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899'];
@@ -22,8 +25,11 @@ const Subscriptions: React.FC = () => {
   const [loading, setLoading]             = useState(true);
   const [error, setError]                 = useState('');
   const [dialogOpen, setDialogOpen]       = useState(false);
+  const [editingSubId, setEditingSubId]   = useState<number | null>(null);
   const [pushing, setPushing]             = useState<number | null>(null);
   const [snack, setSnack]                 = useState<{ open: boolean; msg: string; severity: 'success' | 'error' }>({ open: false, msg: '', severity: 'success' });
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; subId: number | null }>({ open: false, subId: null });
+  const [deleting, setDeleting]           = useState(false);
 
   const user = getCurrentUser();
 
@@ -59,6 +65,20 @@ const Subscriptions: React.FC = () => {
       setSnack({ open: true, msg: err.response?.data?.message ?? 'Failed to push bill.', severity: 'error' });
     } finally {
       setPushing(null);
+    }
+  };
+
+  const handleDelete = async (subId: number) => {
+    setDeleting(true);
+    try {
+      await deleteSubscription(subId);
+      setSnack({ open: true, msg: 'Subscription deleted successfully!', severity: 'success' });
+      fetchAll();
+    } catch (err: any) {
+      setSnack({ open: true, msg: err.response?.data?.message ?? 'Failed to delete subscription.', severity: 'error' });
+    } finally {
+      setDeleting(false);
+      setDeleteConfirm({ open: false, subId: null });
     }
   };
 
@@ -119,11 +139,40 @@ const Subscriptions: React.FC = () => {
                         sx={{ mt: 0.5, height: 20, fontSize: '0.7rem', bgcolor: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}
                       />
                     </Box>
-                    <Box sx={{ textAlign: 'right' }}>
-                      <Typography variant="h5" sx={{ fontWeight: 800, color: '#2c3e50' }}>
-                        ฿{sub.totalAmount.toFixed(2)}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">total / month</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 800, color: '#2c3e50' }}>
+                          ฿{sub.totalAmount.toFixed(2)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">total / month</Typography>
+                      </Box>
+                      {user?.role === 'Admin' && (
+                        <Box sx={{ display: 'flex', gap: 0.5 }}>
+                          <Tooltip title="Edit">
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              startIcon={<EditIcon />}
+                              onClick={() => setEditingSubId(sub.id)}
+                              sx={{ borderRadius: 1, minWidth: 0, px: 1.5, fontSize: '0.7rem' }}
+                            >
+                              Edit
+                            </Button>
+                          </Tooltip>
+                          <Tooltip title="Delete">
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              color="error"
+                              startIcon={<DeleteIcon />}
+                              onClick={() => setDeleteConfirm({ open: true, subId: sub.id })}
+                              sx={{ borderRadius: 1, minWidth: 0, px: 1.5, fontSize: '0.7rem' }}
+                            >
+                              Delete
+                            </Button>
+                          </Tooltip>
+                        </Box>
+                      )}
                     </Box>
                   </Box>
                 </Box>
@@ -201,6 +250,38 @@ const Subscriptions: React.FC = () => {
       {dialogOpen && (
         <CreateSubscriptionDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSuccess={() => { setDialogOpen(false); fetchAll(); }} />
       )}
+
+      {editingSubId && (
+        <EditSubscriptionDialog
+          open={Boolean(editingSubId)}
+          subscription={subscriptions.find(s => s.id === editingSubId)}
+          onClose={() => setEditingSubId(null)}
+          onSuccess={() => { setEditingSubId(null); setSnack({ open: true, msg: 'Subscription updated successfully!', severity: 'success' }); fetchAll(); }}
+        />
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirm.open} onClose={() => setDeleteConfirm({ open: false, subId: null })}>
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Delete Subscription?</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Are you sure you want to delete this subscription? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setDeleteConfirm({ open: false, subId: null })} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => deleteConfirm.subId && handleDelete(deleteConfirm.subId)}
+            disabled={deleting}
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snack.open} autoHideDuration={3500}

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Typography, Box, Grid, Card, CardContent, CircularProgress, Alert,
   Tabs, Tab, Table, TableBody, TableCell, TableContainer, TableHead,
-  TableRow, Paper, Chip, Button, Avatar, IconButton, Collapse, Accordion, AccordionSummary, AccordionDetails
+  TableRow, Paper, Chip, Button, Avatar, IconButton, Collapse, Accordion, AccordionSummary, AccordionDetails,
+  Dialog, DialogTitle, DialogContent, DialogActions, Snackbar
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import PeopleIcon from '@mui/icons-material/People';
@@ -13,7 +14,9 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ImageNotSupportedIcon from '@mui/icons-material/ImageNotSupported';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { getAdminAllBills, getAdminHistory, getCurrentUser } from '../services/api';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { getAdminAllBills, getAdminHistory, getCurrentUser, deleteBill } from '../services/api';
 import AddBillDialog from '../components/AddBillDialog';
 
 interface StatCardProps {
@@ -120,9 +123,9 @@ const HistoryRow: React.FC<HistoryRowProps> = ({ row }) => {
 };
 
 // ── Expandable row for All Bills (shows slip when paid) ─────────────────────
-interface BillRowProps { row: any; }
+interface BillRowProps { row: any; onDelete: (billId: number) => void; }
 
-const BillRow: React.FC<BillRowProps> = ({ row }) => {
+const BillRow: React.FC<BillRowProps> = ({ row, onDelete }) => {
   const [open, setOpen] = useState(false);
   // Safely check if a slip exists using optional chaining
   const hasSlip = Boolean(row.payment?.receiptImageUrl);
@@ -154,6 +157,13 @@ const BillRow: React.FC<BillRowProps> = ({ row }) => {
           <Typography variant="caption" color="text.secondary">
             {row.payment?.verifiedAt ? new Date(row.payment.verifiedAt).toLocaleString() : '—'}
           </Typography>
+        </TableCell>
+        <TableCell align="right">
+          <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
+            <IconButton size="small" color="error" onClick={() => onDelete(row.id)} title="Delete bill">
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Box>
         </TableCell>
       </TableRow>
 
@@ -215,10 +225,27 @@ const AdminDashboard: React.FC = () => {
   const [error, setError] = useState('');
   const [tab, setTab] = useState(0);
   const [addBillOpen, setAddBillOpen] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; billId: number | null }>({ open: false, billId: null });
+  const [deleting, setDeleting] = useState(false);
+  const [snack, setSnack] = useState<{ open: boolean; msg: string; severity: 'success' | 'error' }>({ open: false, msg: '', severity: 'success' });
 
   const user = getCurrentUser();
 
   useEffect(() => { fetchAll(); }, []);
+
+  const handleDeleteBill = async (billId: number) => {
+    setDeleting(true);
+    try {
+      await deleteBill(billId);
+      setSnack({ open: true, msg: 'Bill deleted successfully!', severity: 'success' });
+      fetchAll();
+    } catch (err: any) {
+      setSnack({ open: true, msg: err.response?.data?.message ?? 'Failed to delete bill.', severity: 'error' });
+    } finally {
+      setDeleting(false);
+      setDeleteConfirm({ open: false, billId: null });
+    }
+  };
 
   const fetchAll = async () => {
     setLoading(true);
@@ -303,10 +330,11 @@ const AdminDashboard: React.FC = () => {
                     <TableCell sx={{ fontWeight: 'bold' }}>Amount</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Paid At</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {bills.map(bill => <BillRow key={bill.id} row={bill} />)}
+                  {bills.map(bill => <BillRow key={bill.id} row={bill} onDelete={(billId) => setDeleteConfirm({ open: true, billId })} />)}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -459,6 +487,41 @@ const AdminDashboard: React.FC = () => {
       )}
 
       <AddBillDialog open={addBillOpen} onClose={() => setAddBillOpen(false)} onSuccess={() => { setAddBillOpen(false); fetchAll(); }} />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirm.open} onClose={() => setDeleteConfirm({ open: false, billId: null })}>
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Delete Bill?</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Are you sure you want to delete this bill? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setDeleteConfirm({ open: false, billId: null })} disabled={deleting}>
+            Cancel
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => deleteConfirm.billId && handleDeleteBill(deleteConfirm.billId)}
+            disabled={deleting}
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for feedback */}
+      <Snackbar
+        open={snack.open}
+        autoHideDuration={3500}
+        onClose={() => setSnack(s => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snack.severity} onClose={() => setSnack(s => ({ ...s, open: false }))} sx={{ borderRadius: 2 }}>
+          {snack.msg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

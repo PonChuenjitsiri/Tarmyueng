@@ -106,6 +106,16 @@ export const createSubscription = async (data: any) => {
   return response.data;
 };
 
+export const updateSubscription = async (subscriptionId: number, data: any) => {
+  const response = await api.put(`/Subscriptions/${subscriptionId}`, data);
+  return response.data;
+};
+
+export const deleteSubscription = async (subscriptionId: number) => {
+  const response = await api.delete(`/Subscriptions/${subscriptionId}`);
+  return response.data;
+};
+
 // --- History ---
 export const getPaymentHistory = async (userId: number) => {
   const response = await api.get(`/History/user/${userId}`);
@@ -119,6 +129,16 @@ export const getAdminHistory = async () => {
 
 export const getAdminAllBills = async () => {
   const response = await api.get('/Bills/admin/all');
+  return response.data;
+};
+
+export const updateBill = async (billShareId: number, data: any) => {
+  const response = await api.put(`/Bills/${billShareId}`, data);
+  return response.data;
+};
+
+export const deleteBill = async (billShareId: number) => {
+  const response = await api.delete(`/Bills/${billShareId}`);
   return response.data;
 };
 
