@@ -79,7 +79,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: ${VITE_API_URL:-https://api.tarmyueng.pon-hub.com}
+        VITE_API_URL: ${VITE_API_URL:-https://api-tarmyueng.pon-hub.com}
     container_name: tarmyueng-frontend
     ports:
       - "3000:80"
