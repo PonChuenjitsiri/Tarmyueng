@@ -62,7 +62,7 @@ services:
       Email__SenderEmail: ${SENDER_EMAIL:-noreply@example.com}
       Email__SenderPassword: ${SENDER_PASSWORD:-your-password}
       App__BaseUrl: ${APP_BASE_URL:-https://tarmyueng.pon-hub.com}
-      AllowedOrigins: ${ALLOWED_ORIGINS:-https://tarmyueng.pon-hub.com}
+      AllowedOrigins: ${ALLOWED_ORIGINS:-https://tarmyueng.pon-hub.com,http://localhost:3000}
     ports:
       - "8080:8080"
     depends_on:
