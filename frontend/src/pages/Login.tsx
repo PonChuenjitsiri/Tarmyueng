@@ -44,7 +44,7 @@ const Login: React.FC = () => {
             💸 Tarmyueng
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
-            ตัวติดตามค่าใช้จ่ายร่วมกัน
+            Shared expense tracker
           </Typography>
         </Box>
 
@@ -54,9 +54,9 @@ const Login: React.FC = () => {
           boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
           border: '1px solid #e5e7eb',
         }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5, fontSize: { xs: '1rem', sm: '1.25rem' } }}>ยินดีต้อนรับกลับมา</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5, fontSize: { xs: '1rem', sm: '1.25rem' } }}>Welcome back</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3, fontSize: { xs: '0.85rem', sm: '1rem' } }}>
-            เข้าสู่บัญชีของคุณ
+            Sign in to your account
           </Typography>
 
           {error && (
@@ -66,12 +66,12 @@ const Login: React.FC = () => {
           <form onSubmit={handleLogin}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1.5, sm: 2 } }}>
               <TextField
-                label="ที่อยู่อีเมล" type="email" fullWidth autoFocus
+                label="Email address" type="email" fullWidth autoFocus
                 value={email} onChange={e => setEmail(e.target.value)}
                 size="small"
               />
               <TextField
-                label="รหัสผ่าน" fullWidth
+                label="Password" fullWidth
                 type={showPw ? 'text' : 'password'}
                 value={password} onChange={e => setPassword(e.target.value)}
                 size="small"
@@ -94,7 +94,7 @@ const Login: React.FC = () => {
                   variant="body2"
                   sx={{ fontWeight: 600, textDecoration: 'none', fontSize: { xs: '0.8rem', sm: '1rem' } }}
                 >
-                  ลืมรหัสผ่าน?
+                  Forgot password?
                 </Link>
               </Box>
               <Button
@@ -102,7 +102,7 @@ const Login: React.FC = () => {
                 disabled={loading}
                 sx={{ borderRadius: 8, py: { xs: 1, sm: 1.4 }, fontWeight: 700, fontSize: { xs: '0.9rem', sm: '0.95rem' }, mt: 1 }}
               >
-                {loading ? 'กำลังเข้าสู่ระบบ…' : 'เข้าสู่ระบบ'}
+                {loading ? 'Signing in…' : 'Sign in'}
               </Button>
             </Box>
           </form>

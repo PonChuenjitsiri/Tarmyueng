@@ -26,14 +26,14 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   const navLinks = isAdmin
     ? [
-        { label: 'แดชบอร์ด', to: '/admin' },
-        { label: 'สมาชิก', to: '/subscriptions' },
-        { label: 'สรุปหนี้สิน', to: '/debt-summary' },
-        { label: 'จัดการผู้ใช้', to: '/users' },
+        { label: 'Dashboard', to: '/admin' },
+        { label: 'Groups', to: '/subscriptions' },
+        { label: 'Debt', to: '/debt-summary' },
+        { label: 'Users', to: '/users' },
       ]
     : [
-        { label: 'แดชบอร์ด', to: '/dashboard' },
-        { label: 'ประวัติของฉัน', to: '/bills' },
+        { label: 'Dashboard', to: '/dashboard' },
+        { label: 'History', to: '/bills' },
       ];
 
   return (
@@ -72,7 +72,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 sx={{ color: 'inherit', borderColor: 'rgba(255,255,255,0.5)' }}
               />
               <Button color="inherit" variant="outlined" size="small" onClick={handleLogout} sx={{ borderRadius: 8 }}>
-                ออกจากระบบ
+                Logout
               </Button>
             </Box>
           )}
@@ -123,7 +123,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   handleLogout();
                 }}
               >
-                ออกจากระบบ
+                Logout
               </Button>
             </Box>
           </Box>

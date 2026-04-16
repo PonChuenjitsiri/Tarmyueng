@@ -284,27 +284,27 @@ const AdminDashboard: React.FC = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>แดชบอร์ดผู้ดูแล</Typography>
-          <Typography variant="body2" color="text.secondary">ยินดีต้อนรับกลับ {user?.username}</Typography>
+          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>Dashboard</Typography>
+          <Typography variant="body2" color="text.secondary">Hi, {user?.username}</Typography>
         </Box>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddBillOpen(true)} sx={{ borderRadius: 8, px: 3 }}>
-          เพิ่มบิล
+          + Add
         </Button>
       </Box>
 
       {/* Stats */}
       <Grid container spacing={{ xs: 1.5, sm: 2, md: 3 }} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard label="บิลทั้งหมด" value={bills.length} icon={<ReceiptIcon />} color="#3498db" />
+          <StatCard label="Bills" value={bills.length} icon={<ReceiptIcon />} color="#3498db" />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard label="ชำระแล้ว" value={paid} icon={<CheckCircleIcon />} color="#27ae60" />
+          <StatCard label="Paid" value={paid} icon={<CheckCircleIcon />} color="#27ae60" />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard label="ยังไม่ชำระ" value={unpaid} icon={<PendingIcon />} color="#e67e22" />
+          <StatCard label="Unpaid" value={unpaid} icon={<PendingIcon />} color="#e67e22" />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard label="รวมเก็บได้" value={`฿${totalRevenue.toFixed(2)}`} icon={<PeopleIcon />} color="#9b59b6" />
+          <StatCard label="Collected" value={`฿${totalRevenue.toFixed(2)}`} icon={<PeopleIcon />} color="#9b59b6" />
         </Grid>
       </Grid>
 
@@ -317,29 +317,29 @@ const AdminDashboard: React.FC = () => {
           scrollButtons={isMobile ? 'auto' : false}
           sx={{ minHeight: 'auto' }}
         >
-          <Tab label={`บิลทั้งหมด (${bills.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
-          <Tab label={`บิลตามสมาชิก (${groupedBills.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
-          <Tab label={`ประวัติการชำระ (${history.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
+          <Tab label={`Bills (${bills.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
+          <Tab label={`Groups (${groupedBills.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
+          <Tab label={`History (${history.length})`} sx={{ fontSize: isMobile ? '0.75rem' : '1rem' }} />
         </Tabs>
       </Box>
 
       {/* All Bills */}
       {tab === 0 && (
         bills.length === 0
-          ? <Alert severity="info">ยังไม่มีบิล คลิก "เพิ่มบิล" เพื่อเริ่มต้น</Alert>
+          ? <Alert severity="info">No bills. Click "+ Add" to start.</Alert>
           : (
             <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3, overflowX: 'auto' }}>
               <Table size={isMobile ? 'small' : 'medium'}>
                 <TableHead sx={{ bgcolor: '#f8f9fa' }}>
                   <TableRow>
                     <TableCell padding="checkbox" />
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>ผู้ใช้</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>บิล</TableCell>
-                    {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>เดือน</TableCell>}
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>จำนวนเงิน</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>สถานะ</TableCell>
-                    {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>วันที่ชำระ</TableCell>}
-                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>การดำเนิน</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>User</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Bill</TableCell>
+                    {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>Month</TableCell>}
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Amount</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Status</TableCell>
+                    {!isMobile && <TableCell sx={{ fontWeight: 'bold' }}>Paid At</TableCell>}
+                    <TableCell sx={{ fontWeight: 'bold', fontSize: isMobile ? '0.85rem' : '1rem' }}>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -353,7 +353,7 @@ const AdminDashboard: React.FC = () => {
       {/* Bills by Subscription (Grouped) */}
       {tab === 1 && (
         groupedBills.length === 0
-          ? <Alert severity="info">ยังไม่มีสมาชิก</Alert>
+          ? <Alert severity="info">No groups yet.</Alert>
           : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {groupedBills.map(subscription => (
@@ -471,7 +471,7 @@ const AdminDashboard: React.FC = () => {
       {/* Payment History */}
       {tab === 2 && (
         history.length === 0
-          ? <Alert severity="info">ยังไม่มีการชำระเงิน</Alert>
+          ? <Alert severity="info">No payments yet.</Alert>
           : (
             <TableContainer component={Paper} elevation={2} sx={{ borderRadius: 3 }}>
               <Table>
