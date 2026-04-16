@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
                     Admin: {sub.adminUsername}
                   </Typography>
                   <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid #e5e7eb' }}>
-                    <Typography variant="caption" color="text.secondary">Due date</Typography>
+                    <Typography variant="caption" color="text.secondary">Next bill</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
                       {getNextBillingDate(sub.billingDayOfMonth)}
                     </Typography>

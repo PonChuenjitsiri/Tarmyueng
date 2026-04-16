@@ -138,7 +138,7 @@ const MySubscriptions: React.FC = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                           <CalendarTodayIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
                           <Typography variant="caption" color="text.secondary">
-                            Due Date
+                            Next Bill
                           </Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#92400e' }}>
@@ -153,7 +153,16 @@ const MySubscriptions: React.FC = () => {
                       </Box>
                     ) : (
                       <Box sx={{ bgcolor: '#d1fae5', p: 1.5, borderRadius: 1.5, borderLeft: '3px solid #10b981' }}>
-                        <Typography variant="caption" color="text.secondary" sx={{ color: '#065f46' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                          <CalendarTodayIcon sx={{ fontSize: 16, color: '#10b981' }} />
+                          <Typography variant="caption" color="text.secondary" sx={{ color: '#065f46' }}>
+                            Next Bill
+                          </Typography>
+                        </Box>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#065f46' }}>
+                          {getNextBillingDate(sub.billingDayOfMonth)}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" sx={{ color: '#065f46', display: 'block', mt: 0.5 }}>
                           ✓ All paid up!
                         </Typography>
                       </Box>
