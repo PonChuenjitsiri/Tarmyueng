@@ -5,6 +5,7 @@ import theme from './theme';
 import AdminDashboard from './pages/AdminDashboard';
 import Dashboard from './pages/Dashboard';
 import Bills from './pages/Bills';
+import MySubscriptions from './pages/MySubscriptions';
 import Login from './pages/Login';
 import UsersAdmin from './pages/UsersAdmin';
 import Subscriptions from './pages/Subscriptions';
@@ -33,6 +34,7 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/bills" element={<Bills />} />
+            <Route path="/my-subscriptions" element={<MySubscriptions />} />
             <Route path="/subscriptions" element={<Subscriptions />} />
             <Route path="/users" element={<UsersAdmin />} />
             <Route path="/debt-summary" element={<DebtSummaryPage />} />

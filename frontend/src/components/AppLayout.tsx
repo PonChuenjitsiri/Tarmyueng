@@ -33,6 +33,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       ]
     : [
         { label: 'Dashboard', to: '/dashboard' },
+        { label: 'Subs', to: '/my-subscriptions' },
         { label: 'History', to: '/bills' },
       ];
 
