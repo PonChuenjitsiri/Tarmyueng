@@ -17,20 +17,30 @@ public class BillingEngineService
 
     public async Task GenerateMonthlyBillsAsync()
     {
-        var localNow = DateTime.Now;  
-        var utcNow = DateTime.UtcNow;  
+        var localNow = DateTime.Now;
+        var utcNow = DateTime.UtcNow;
         var currentMonthYear = localNow.ToString("MM-yyyy");
+        var currentDay = localNow.Day;
 
-        _logger.LogInformation("Starting Monthly Billing Engine for {MonthYear} (Local day: {Day})...", currentMonthYear, localNow.Day);
+        _logger.LogInformation("=== BILLING ENGINE CHECK === Date: {Date}, Day: {Day}, MonthYear: {MonthYear}", localNow.ToString("yyyy-MM-dd HH:mm:ss"), currentDay, currentMonthYear);
+
+        var allSubscriptions = await _context.SubscriptionTemplates.ToListAsync();
+        _logger.LogInformation("Total subscriptions in DB: {Count}", allSubscriptions.Count);
+        foreach (var sub in allSubscriptions)
+        {
+            _logger.LogInformation("  - {Title}: IsActive={IsActive}, BillingDay={BillingDay}", sub.Title, sub.IsActive, sub.BillingDayOfMonth);
+        }
 
         var subscriptionsToBill = await _context.SubscriptionTemplates
             .Include(s => s.Participants)
-            .Where(s => s.IsActive && s.BillingDayOfMonth == localNow.Day)
+            .Where(s => s.IsActive && s.BillingDayOfMonth == currentDay)
             .ToListAsync();
+
+        _logger.LogInformation("Subscriptions to bill today: {Count}", subscriptionsToBill.Count);
 
         if (!subscriptionsToBill.Any())
         {
-            _logger.LogInformation("No active subscriptions found for day {Day}.", localNow.Day);
+            _logger.LogInformation("No active subscriptions with billing day = {Day}", currentDay);
             return;
         }
 
