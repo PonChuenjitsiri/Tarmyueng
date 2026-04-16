@@ -49,6 +49,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
+      TZ: Asia/Bangkok
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB:-expensetracker};Username=${POSTGRES_USER:-admin};Password=${POSTGRES_PASSWORD:-secretpassword}
       Jwt__Key: ${JWT_SECRET:-default-dev-key-change-in-production}
       MinIO__ServiceUrl: http://minio:9000
