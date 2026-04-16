@@ -115,4 +115,41 @@ public class MinioService
         {
         }
     }
+
+    public async Task SetBucketPublicAsync()
+    {
+        try
+        {
+            // Policy to allow public read access to the bucket
+            string policy = @"{{
+                ""Version"": ""2012-10-17"",
+                ""Statement"": [
+                    {{
+                        ""Effect"": ""Allow"",
+                        ""Principal"": {{
+                            ""AWS"": ""*""
+                        }},
+                        ""Action"": [
+                            ""s3:GetObject""
+                        ],
+                        ""Resource"": ""arn:aws:s3:::{0}/*""
+                    }}
+                ]
+            }}";
+
+            policy = string.Format(policy, _bucketName);
+
+            await _client.PutBucketPolicyAsync(new Amazon.S3.Model.PutBucketPolicyRequest
+            {
+                BucketName = _bucketName,
+                Policy = policy
+            }).ConfigureAwait(false);
+
+            Console.WriteLine($"✅ Bucket '{_bucketName}' set to public (read-only)");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"⚠️  Warning: Could not set bucket policy: {ex.Message}");
+        }
+    }
 }

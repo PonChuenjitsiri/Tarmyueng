@@ -142,6 +142,7 @@ try
         Console.WriteLine("Initializing Minio...");
         var minioService = scope.ServiceProvider.GetRequiredService<MinioService>();
         await minioService.EnsureBucketAsync();
+        await minioService.SetBucketPublicAsync();
         Console.WriteLine("Minio Initialized.");
     }
 }
