@@ -164,4 +164,9 @@ export const getBillsBySubscription = async () => {
   return response.data;
 };
 
+export const getUserSubscriptions = async () => {
+  const response = await api.get('/reports/user-subscriptions');
+  return response.data;
+};
+
 export default api;

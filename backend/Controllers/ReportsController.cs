@@ -151,6 +151,46 @@ public class ReportsController : ControllerBase
         return Ok(billsGrouped);
     }
 
+    [HttpGet("user-subscriptions")]
+    public async Task<IActionResult> GetUserSubscriptions()
+    {
+        var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userId = int.Parse(currentUserId ?? "0");
+
+        var userSubscriptions = await _context.SubscriptionParticipants
+            .Where(sp => sp.UserId == userId)
+            .Include(sp => sp.Template)
+                .ThenInclude(t => t!.Admin)
+            .Include(sp => sp.Template)
+                .ThenInclude(t => t!.Participants)
+            .Select(sp => new
+            {
+                sp.Template!.Id,
+                sp.Template.Title,
+                AdminUsername = sp.Template.Admin!.Username,
+                sp.Template.BillingDayOfMonth,
+                sp.Template.IsActive,
+                sp.Template.TotalAmount,
+                ParticipantCount = sp.Template.Participants.Count,
+                NextBill = _context.MonthlyBills
+                    .Where(mb => mb.SubscriptionTemplateId == sp.Template.Id)
+                    .OrderByDescending(mb => mb.CreatedAt)
+                    .Select(mb => new
+                    {
+                        mb.MonthYear,
+                        AmountOwed = _context.BillShares
+                            .Where(bs => bs.MonthlyBillId == mb.Id && bs.UserId == userId && bs.Status != "Paid")
+                            .Sum(bs => bs.AmountOwed)
+                    })
+                    .FirstOrDefault()
+            })
+            .Distinct()
+            .OrderBy(s => s.Title)
+            .ToListAsync();
+
+        return Ok(userSubscriptions);
+    }
+
     [HttpGet("dashboard-stats")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetDashboardStats()
