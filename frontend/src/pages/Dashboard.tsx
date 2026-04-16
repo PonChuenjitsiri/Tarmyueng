@@ -112,9 +112,12 @@ const Dashboard: React.FC = () => {
                     Admin: {sub.adminUsername}
                   </Typography>
                   <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid #e5e7eb' }}>
-                    <Typography variant="caption" color="text.secondary">Next bill</Typography>
+                    <Typography variant="caption" color="text.secondary">Due date</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                      {sub.nextBill?.monthYear ?? 'No bills yet'}
+                      {sub.nextBill ? (() => {
+                        const [month, year] = sub.nextBill.monthYear.split('-');
+                        return `${sub.billingDayOfMonth}/${month}/${year}`;
+                      })() : 'No bills yet'}
                     </Typography>
                     {sub.nextBill && sub.nextBill.amountOwed > 0 && (
                       <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#e67e22', mt: 0.5 }}>

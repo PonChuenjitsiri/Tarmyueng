@@ -119,11 +119,14 @@ const MySubscriptions: React.FC = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                           <CalendarTodayIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
                           <Typography variant="caption" color="text.secondary">
-                            Next Bill
+                            Due Date
                           </Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#92400e' }}>
-                          {sub.nextBill.monthYear}
+                          {(() => {
+                            const [month, year] = sub.nextBill.monthYear.split('-');
+                            return `${sub.billingDayOfMonth}/${month}/${year}`;
+                          })()}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
                           <AttachMoneyIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
