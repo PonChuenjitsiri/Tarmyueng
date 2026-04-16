@@ -52,6 +52,7 @@ services:
       ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB:-expensetracker};Username=${POSTGRES_USER:-admin};Password=${POSTGRES_PASSWORD:-secretpassword}
       Jwt__Key: ${JWT_SECRET:-default-dev-key-change-in-production}
       MinIO__ServiceUrl: http://minio:9000
+      MinIO__PublicUrl: ${MINIO_PUBLIC_URL:-https://minio-tarmyueng.pon-hub.com}
       MinIO__AccessKey: ${MINIO_ACCESS_KEY:-admin}
       MinIO__SecretKey: ${MINIO_SECRET_KEY:-secretpassword}
       MinIO__BucketName: ${MINIO_BUCKET_NAME:-slips}
