@@ -39,12 +39,7 @@ public class BillingSchedulerService : BackgroundService
 
     private async Task TriggerBillingIfNeeded()
     {
-        var now = DateTime.Now;  
-
-        if (now.Hour != 0 || now.Minute != 5)
-        {
-            return;
-        }
+        var now = DateTime.Now;
 
         try
         {
@@ -52,7 +47,7 @@ public class BillingSchedulerService : BackgroundService
             {
                 var billingService = scope.ServiceProvider.GetRequiredService<BillingEngineService>();
                 await billingService.GenerateMonthlyBillsAsync();
-                _logger.LogInformation("Daily billing check completed at {Time}", now);
+                _logger.LogInformation("Billing check completed at {Time}", now);
             }
         }
         catch (Exception ex)
