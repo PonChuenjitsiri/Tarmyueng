@@ -82,22 +82,67 @@ const Dashboard: React.FC = () => {
   if (loading) return <CircularProgress />;
   if (error) return <Alert severity="error">{error}</Alert>;
 
+  // Group bills by subscription
+  const subscriptions = Array.from(
+    new Map(bills.map(b => [b.monthlyBill.template.id, {
+      id: b.monthlyBill.template.id,
+      name: b.monthlyBill.template.title,
+      admin: b.monthlyBill.template.admin.username,
+      nextBill: b.monthlyBill.monthYear,
+      amount: b.amountOwed,
+      billingDay: b.monthlyBill.template.billingDayOfMonth,
+      isActive: b.monthlyBill.template.isActive
+    }])).values()
+  );
+
   return (
     <div>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
         Hi, {user?.username}!
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        {bills.length} pending bill{bills.length !== 1 ? 's' : ''}
+        {bills.length} pending • {subscriptions.length} active
       </Typography>
+
+      {/* Active Subscriptions */}
+      {subscriptions.length > 0 && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Your Groups</Typography>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+            {subscriptions.map(sub => (
+              <Card key={sub.id} sx={{ borderRadius: 3, borderLeft: `4px solid #5865f2` }}>
+                <CardContent sx={{ p: 2.5 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#5865f2' }}>
+                    {sub.name}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                    Admin: {sub.admin}
+                  </Typography>
+                  <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid #e5e7eb' }}>
+                    <Typography variant="caption" color="text.secondary">Next bill</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      {sub.nextBill}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#e67e22', mt: 0.5 }}>
+                      ฿{sub.amount.toFixed(2)}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        </Box>
+      )}
 
       {bills.length === 0 ? (
         <Alert severity="success" sx={{ mt: 2, borderRadius: 3 }}>
           All clear! 🎉
         </Alert>
       ) : (
-        <Grid container spacing={3} sx={{ mt: 1 }}>
-          {bills.map((bill) => {
+        <>
+          <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>Pending Bills</Typography>
+          <Grid container spacing={3} sx={{ mt: 0 }}>
+            {bills.map((bill) => {
             const promptPayId = bill.monthlyBill.template.admin.promptPayId ?? '0000000000';
             const amount = bill.amountOwed;
             const qrPayload = generatePayload(promptPayId, { amount });
@@ -209,8 +254,9 @@ const Dashboard: React.FC = () => {
                 </Card>
               </Grid>
             );
-          })}
-        </Grid>
+            })}
+          </Grid>
+        </>
       )}
     </div>
   );
