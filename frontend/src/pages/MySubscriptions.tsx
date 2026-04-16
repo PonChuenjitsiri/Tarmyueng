@@ -8,6 +8,25 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonIcon from '@mui/icons-material/Person';
 import { getUserSubscriptions, getCurrentUser } from '../services/api';
 
+const getNextBillingDate = (billingDay: number): string => {
+  const today = new Date();
+  const currentDay = today.getDate();
+  let month = today.getMonth() + 1; // 1-12
+  let year = today.getFullYear();
+
+  // If today is past the billing day, next bill is next month
+  if (currentDay > billingDay) {
+    month++;
+    if (month > 12) {
+      month = 1;
+      year++;
+    }
+  }
+
+  const monthStr = String(month).padStart(2, '0');
+  return `${billingDay}/${monthStr}/${year}`;
+};
+
 const MySubscriptions: React.FC = () => {
   const [subscriptions, setSubscriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,10 +142,7 @@ const MySubscriptions: React.FC = () => {
                           </Typography>
                         </Box>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#92400e' }}>
-                          {(() => {
-                            const [month, year] = sub.nextBill.monthYear.split('-');
-                            return `${sub.billingDayOfMonth}/${month}/${year}`;
-                          })()}
+                          {getNextBillingDate(sub.billingDayOfMonth)}
                         </Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
                           <AttachMoneyIcon sx={{ fontSize: 16, color: '#f59e0b' }} />

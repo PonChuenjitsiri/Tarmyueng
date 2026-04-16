@@ -8,6 +8,25 @@ import generatePayload from 'promptpay-qr';
 import { QRCodeSVG } from 'qrcode.react';
 import { getPendingBills, getUserSubscriptions, uploadPaymentSlip, getCurrentUser } from '../services/api';
 
+const getNextBillingDate = (billingDay: number): string => {
+  const today = new Date();
+  const currentDay = today.getDate();
+  let month = today.getMonth() + 1; // 1-12
+  let year = today.getFullYear();
+
+  // If today is past the billing day, next bill is next month
+  if (currentDay > billingDay) {
+    month++;
+    if (month > 12) {
+      month = 1;
+      year++;
+    }
+  }
+
+  const monthStr = String(month).padStart(2, '0');
+  return `${billingDay}/${monthStr}/${year}`;
+};
+
 const Dashboard: React.FC = () => {
   const [bills, setBills] = useState<any[]>([]);
   const [userSubscriptions, setUserSubscriptions] = useState<any[]>([]);
@@ -114,10 +133,7 @@ const Dashboard: React.FC = () => {
                   <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px solid #e5e7eb' }}>
                     <Typography variant="caption" color="text.secondary">Due date</Typography>
                     <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                      {sub.nextBill ? (() => {
-                        const [month, year] = sub.nextBill.monthYear.split('-');
-                        return `${sub.billingDayOfMonth}/${month}/${year}`;
-                      })() : 'No bills yet'}
+                      {getNextBillingDate(sub.billingDayOfMonth)}
                     </Typography>
                     {sub.nextBill && sub.nextBill.amountOwed > 0 && (
                       <Typography variant="body2" sx={{ fontWeight: 'bold', color: '#e67e22', mt: 0.5 }}>
