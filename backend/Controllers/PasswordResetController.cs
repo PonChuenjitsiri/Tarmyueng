@@ -1,6 +1,8 @@
+using ExpenseTracker.Api.Data;
 using ExpenseTracker.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.Api.Controllers;
 
@@ -9,11 +11,13 @@ namespace ExpenseTracker.Api.Controllers;
 public class PasswordResetController : ControllerBase
 {
     private readonly PasswordResetService _passwordResetService;
+    private readonly AppDbContext _context;
     private readonly ILogger<PasswordResetController> _logger;
 
-    public PasswordResetController(PasswordResetService passwordResetService, ILogger<PasswordResetController> logger)
+    public PasswordResetController(PasswordResetService passwordResetService, AppDbContext context, ILogger<PasswordResetController> logger)
     {
         _passwordResetService = passwordResetService;
+        _context = context;
         _logger = logger;
     }
 
@@ -26,15 +30,26 @@ public class PasswordResetController : ControllerBase
 
         try
         {
-            // For security, don't reveal if email exists
-            await _passwordResetService.SendPasswordResetEmailAsync(1); // Will fail silently in logs
+            // Look up user by email
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            // For security, don't reveal if email exists - still return success
+            if (user != null)
+            {
+                await _passwordResetService.SendPasswordResetEmailAsync(user.Id);
+                _logger.LogInformation("Password reset email sent to {Email}", request.Email);
+            }
+            else
+            {
+                _logger.LogWarning("Password reset requested for non-existent email: {Email}", request.Email);
+            }
 
             // Always return success to prevent email enumeration
             return Ok(new { message = "If an account exists with this email, a password reset link has been sent." });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting password reset");
+            _logger.LogError(ex, "Error requesting password reset for email: {Email}", request.Email);
             // Return same message for security
             return Ok(new { message = "If an account exists with this email, a password reset link has been sent." });
         }
